@@ -19,7 +19,6 @@ connection.connect(function (err) {
 
 // function which prompts the user for what action they should take
 function start() {
-  // showAll()
   inquirer
     .prompt({
       name: "begin",
@@ -29,11 +28,6 @@ function start() {
     })
     .then(function (answer) {
       console.log(answer);
-      // based on their answer, either call the bid or the post functions
-      // if (answer.begin == "POST") {
-      //   postAuction();
-      // }
-      // else 
       if (answer.begin == "BUY") {
         buyProduct();
         showAll();
@@ -43,24 +37,14 @@ function start() {
     });
 }
 
-// function to handle posting new items up for auction
-// function postAuction() {
-//   connection.query(
-//     "select * from products;"
-//   );
-// }
-
 function showAll() {
   connection.query("SELECT * FROM products", function (err, results) {
-    // for (var i = 0; i < results.length; i++) {
-      // console.log("\nID: " + results[i].item_id + " // " + results[i].product_name + "// $" + results[i].price);
-      console.table(results)
-    // }
+    console.table(results)
   });
 }
 
 function buyProduct() {
-  // query the database for all items being auctioned
+  // query the database for all items being sold
   connection.query("SELECT * FROM products", function (err, results) {
     if (err) throw err;
     inquirer
@@ -72,7 +56,6 @@ function buyProduct() {
             var choiceArray = [];
             for (var i = 0; i < results.length; i++) {
               choiceArray.push(results[i].product_name);
-              // console.log("ID: " + results[i].item_id + " // " + results[i].product_name + "// $" + results[i].price);
             }
             return choiceArray;
           },
@@ -92,11 +75,9 @@ function buyProduct() {
             chosenItem = results[i];
           }
         }
-        // console.log(chosenItem.stock_quantity)
-        // console.log(answer.buy)
-        // determine if bid was high enough
+
+        // checks that there are enough items in stock, before updating db, letting the user know, and starting over
         if (answer.buy < parseInt(chosenItem.stock_quantity)) {
-          // bid was high enough, so update db, let the user know, and start over
           var newQuantity = parseInt(chosenItem.stock_quantity - answer.buy)
           // console.log(newQuantity)
           connection.query(
@@ -111,13 +92,13 @@ function buyProduct() {
             ],
             function (error) {
               if (error) throw err;
-              console.log("Purchase successful! Enjoy your " + chosenItem.product_name + "! That will be $" + answer.buy*chosenItem.price + "." );
+              console.log("Purchase successful! Enjoy your " + chosenItem.product_name + "! That will be $" + answer.buy * chosenItem.price + ".");
               start();
             }
           );
         }
         else {
-          // bid wasn't high enough, so apologize and start over
+          // give error if user wants more than what is available
           console.log("Sorry, we don't have enough items to fulfill your order. We only have " + chosenItem.stock_quantity + " " + chosenItem.product_name);
           start();
         }
