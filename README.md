@@ -7,7 +7,8 @@ This assignment tested our ability to use MySQL and Node.JS to create a live inv
 
 Two options are available upon loading into the app: Buy or Exit. Buy lets you see the inventory and exit takes you out of the app.
 
-![packages](![packages](img/1.png))
+![packages](![packages](img/1.png)
+
 
 # Pick Something to Buy
 
